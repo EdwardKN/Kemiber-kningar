@@ -1,11 +1,11 @@
 var table;
 
 var rows = {
-    input:"",
-    formel:"",
-    mol:"",
-    massa:"",
-    molmassa:""
+    formel:"Formula",
+    mol:"Mole",
+    massa:"Mass",
+    molmassa:"Molemass",
+    input:"Input"
 };
 
 var newArray;
@@ -58,18 +58,19 @@ function updateTable(value){
                 value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value = JSON.parse(value.value)/JSON.parse(value.parentNode.parentNode.parentNode.children[3].children[tmpIndex].innerText)
             }
             
-                for(let n = 0; n < newArray.length; n++){
-                    if(isNumeric(newArray[n][0])){
-                        amountArray[n] = JSON.parse(newArray[n][0]);
+                for(let n = 1; n < newArray.length+1; n++){
+                    if(isNumeric(newArray[n-1][0])){
+                        amountArray[n] = JSON.parse(newArray[n-1][0]);
                     }else{
                         amountArray[n] = 1;
                     }
                     
 
                 }
-                for(let n = 0; n < newArray.length; n++){
+                for(let n = 1; n < newArray.length+1; n++){
 
-                    if(newArray[n][0] !== "+" && newArray[n][0] !== "="){                        
+                    if(newArray[n-1][0] !== "+" && newArray[n-1][0] !== "="){   
+                        console.log(amountArray[n]/amountArray[tmpIndex])                     
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value = (amountArray[n]/amountArray[tmpIndex])*JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value)
                         value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value)*JSON.parse(value.parentNode.parentNode.parentNode.children[3].children[n].innerText)
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].setAttribute("readonly","");
@@ -81,9 +82,9 @@ function updateTable(value){
         }
         console.log(startValue.length)
 
-    for(let x = 0; x < newArray.length; x++){
+    for(let x = 1; x < newArray.length+1; x++){
         for(let y = 1; y < 3; y++){
-            if(newArray[x][0] !== "+" && newArray[x][0] !== "="){                        
+            if(newArray[x-1][0] !== "+" && newArray[x-1][0] !== "="){                        
                 if(table.children[y].children[x].children[0] != value){
                     if(table.children[y].children[x].children[0].value.startsWith(0)){
                         if(table.children[y].children[x].children[0].value.includes(".")){
@@ -189,8 +190,16 @@ function updateInput(value){
     
 
     newArray = split(newValue);
+    console.log()
+    
+    for(let n = 0; n<Object.entries(rows).length;n++ ){
+        let td = document.createElement("td")
+        td.innerText = Object.entries(rows)[n][1]
+        table.children[n].appendChild(td)
+    }
+    
 
-    for(let n = -1; n<split(oldNewValue).length;n++ ){
+    for(let n = 0; n<split(oldNewValue).length;n++ ){
         if(n >= 0){
         for(let i = 0; i< 5; i++){
             let td;
@@ -254,8 +263,6 @@ function updateInput(value){
             
             table.children[i].appendChild(td)
         }
-    }else{
-        
     }
 
 }
