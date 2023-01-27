@@ -27,8 +27,7 @@ function init(){
 function updateTable(value){
     let tmpIndex;
     let amountArray = [];
-        let tmpIndex2;
-    let numberThing = value.value.length;
+    let tmpIndex2;
     let startValue = value.value
 
         for(let i =0; i <value.parentNode.parentNode.children.length; i++){
@@ -88,15 +87,15 @@ function updateTable(value){
                 if(table.children[y].children[x].children[0] != value){
                     if(table.children[y].children[x].children[0].value.startsWith(0)){
                         if(table.children[y].children[x].children[0].value.includes(".")){
-                            table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substring(0,startValue.replaceAll(".","").length+2);
+                            table.children[y].children[x].children[0].value = JSON.parse(table.children[y].children[x].children[0].value).toPrecision(startValue.replaceAll(".","").length)
                         }else{
-                            table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substring(0,startValue.replaceAll(".","").length+1);
+                            table.children[y].children[x].children[0].value = JSON.parse(table.children[y].children[x].children[0].value).toPrecision(startValue.replaceAll(".","").length)
                         }
                     }else{
                         if(table.children[y].children[x].children[0].value.includes(".")){
-                        table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substring(0,startValue.replaceAll(".","").length+1);
+                        table.children[y].children[x].children[0].value = JSON.parse(table.children[y].children[x].children[0].value).toPrecision(startValue.replaceAll(".","").length)
                     }else{
-                        table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substring(0,startValue.replaceAll(".","").length);
+                        table.children[y].children[x].children[0].value = JSON.parse(table.children[y].children[x].children[0].value).toPrecision(startValue.replaceAll(".","").length)
                     }
                     }
 
