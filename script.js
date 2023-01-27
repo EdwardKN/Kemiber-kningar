@@ -247,7 +247,8 @@ function updateInput(value){
 
                     })
                 })
-                td.innerText = tmpValue
+                
+                td.innerText = Math.round(tmpValue*100)/100
 
             }
             
