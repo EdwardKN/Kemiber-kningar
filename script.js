@@ -307,25 +307,8 @@ function deep_value(obj, path){
     return obj;
 };
 
-function countProperties(obj) {
-    var count = 0;
 
-    for(var prop in obj) {
-        if(obj.hasOwnProperty(prop))
-            ++count;
-    }
 
-    return count;
-}
-
-function splitMulti(str, tokens){
-    var tempChar = tokens[0]; 
-    for(var i = 1; i < tokens.length; i++){
-        str = str.split(tokens[i]).join(tempChar);
-    }
-    str = str.split(tempChar);
-    return str
-}
 
 
 const split = (arr) => {
