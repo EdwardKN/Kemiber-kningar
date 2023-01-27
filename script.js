@@ -248,7 +248,7 @@ function updateInput(value){
 
                         valueThing.replace(/\d+|[A-Z]/g, '~$&').split('~').forEach(valueThing2 => {
                             if(valueThing2 == (deep_value(element,"symbol"))){
-                                tmpValue+=Math.round(deep_value(element,"atomic_mass")*100)/100
+                                tmpValue+=deep_value(element,"atomic_mass")
                             }
                         });
                         
@@ -256,7 +256,7 @@ function updateInput(value){
                     })
                 })
                 
-                td.innerText = Math.round(tmpValue*100)/100
+                td.innerText = tmpValue.toPrecision(5)
 
             }
             
