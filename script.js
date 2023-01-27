@@ -126,9 +126,11 @@ function updateInput(value){
 
     var oldNewValue = value.split("").filter(item => !(item == ' '));
 
+    console.log(newValue)
+
     for(let i = 0; i < newValue.length; i++){
 
-        if(isNumeric(newValue[i]) && i>0 && newValue[i-1] != "+" && newValue[i-1] != "="  &&isNumeric(newValue[i-1]) == true ){
+        if(isNumeric(newValue[i]) && i>0 && newValue[i-1] != "+" && newValue[i-1] != "="  && newValue[i-1] != "("  && newValue[i-1] != ")" && isNumeric(newValue[i-1]) == true ){
             newValue[i-1] += newValue[i];
             newValue.splice(i,1)
             i = 0;
@@ -136,21 +138,38 @@ function updateInput(value){
     }
     for(let i = 0; i < newValue.length; i++){
 
-         if(newValue[i] == newValue[i].toLowerCase() && newValue[i] != "+" && newValue[i] != "=" && i>0 && !isNumeric(newValue[i] )){
+         if(newValue[i] == newValue[i].toLowerCase() && newValue[i] != "+" && newValue[i] != "=" && newValue[i] != "("  && newValue[i] != ")" && i>0 && !isNumeric(newValue[i] )){
              newValue[i-1] += newValue[i];
              newValue.splice(i,1)
              i = 0;
              continue;
          }else{
-             if(isNumeric(newValue[i]) && i>0 && newValue[i-1] != "+" && newValue[i-1] != "="  &&isNumeric(newValue[i-1]) == false ){
+             if(isNumeric(newValue[i]) && i>0 && newValue[i-1] != "+" && newValue[i-1] != "="  && newValue[i-1] != "("  && newValue[i-1] != ")" &&  isNumeric(newValue[i-1]) == false ){
                  newValue[i-1] = newValue[i-1].repeat(newValue[i])
                  newValue.splice(i,1)
                  i = 0;
              }
         }
-
-
     }
+    let start;
+    let stop;
+
+    for(let i = 0; i < newValue.length; i++){
+        if(i === 0){
+            start = 0;
+            stop = 0; 
+        }
+        if(newValue[i] === "("){
+            start = i;
+        }
+        if(newValue[i] === ")"){
+            stop = i;
+            for(let n = start+1; n<stop-start; n++){
+                newValue[n] = newValue[n].repeat(newValue[stop+1])
+            }
+        }
+    };
+    
     console.log(newValue)
 
     
