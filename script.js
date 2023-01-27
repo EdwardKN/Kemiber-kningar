@@ -69,7 +69,6 @@ function updateTable(value){
                 for(let n = 1; n < newArray.length+1; n++){
 
                     if(newArray[n-1][0] !== "+" && newArray[n-1][0] !== "="){   
-                        console.log(amountArray[n]/amountArray[tmpIndex])                     
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value = (amountArray[n]/amountArray[tmpIndex])*JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value)
                         value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value)*JSON.parse(value.parentNode.parentNode.parentNode.children[3].children[n].innerText)
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].setAttribute("readonly","");
@@ -79,7 +78,6 @@ function updateTable(value){
             
     
         }
-        console.log(startValue.length)
 
     for(let x = 1; x < newArray.length+1; x++){
         for(let y = 1; y < 3; y++){
@@ -137,7 +135,6 @@ function updateInput(value){
 
     var oldNewValue = value.split("").filter(item => !(item == ' '));
 
-    console.log(newValue)
 
     for(let i = 0; i < newValue.length; i++){
 
@@ -175,7 +172,6 @@ function updateInput(value){
         }
         if(newValue[i] === ")"){
             stop = i;
-            console.log(newValue[stop+1])
             if(isNumeric(newValue[stop+1]) && newValue[stop+1] != "+" && newValue[stop+1] != "="){
                 for(let n = start+1; n<stop-start; n++){
                     newValue[n] = newValue[n].repeat(newValue[stop+1])
@@ -184,12 +180,10 @@ function updateInput(value){
         }
     };
     
-    console.log(newValue)
 
     
 
     newArray = split(newValue);
-    console.log()
     
     for(let n = 0; n<Object.entries(rows).length;n++ ){
         let td = document.createElement("td")
