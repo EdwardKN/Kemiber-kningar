@@ -12,7 +12,7 @@ var newArray;
 
 var json;
 
-readTextFile("../table.json", function(text){
+readTextFile("table.json", function(text){
     json = JSON.parse(text);
 });
 
