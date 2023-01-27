@@ -80,7 +80,7 @@ function updateTable(value){
     
         }
         console.log(startValue.length)
-/*
+
     for(let x = 0; x < newArray.length; x++){
         for(let y = 1; y < 3; y++){
             if(newArray[x][0] !== "+" && newArray[x][0] !== "="){                        
@@ -100,7 +100,7 @@ function updateTable(value){
             }
         }
     }
-    */
+    
     value.removeAttribute("readonly")
 }
 
@@ -157,7 +157,8 @@ function updateInput(value){
 
     newArray = split(newValue);
 
-    for(let n = 0; n<split(oldNewValue).length;n++ ){
+    for(let n = -1; n<split(oldNewValue).length;n++ ){
+        if(n >= 0){
         for(let i = 0; i< 5; i++){
             let td;
             if(i === 4 && n === 0){
@@ -219,9 +220,11 @@ function updateInput(value){
             
             table.children[i].appendChild(td)
         }
+    }else{
+        
     }
 
-    
+}
 }
 
 init();
@@ -243,7 +246,10 @@ function balance(){
                 if(newNewValueValue === "+" || newNewValueValue === "="){
                     document.getElementById("formel").value += " ";
                 }
-                document.getElementById("formel").value += newNewValueValue;
+                if(newNewValueValue !== "1"){
+                    document.getElementById("formel").value += newNewValueValue;
+                }
+
                 if(newNewValueValue === "+" || newNewValueValue === "="){
                     document.getElementById("formel").value += " ";
                 }
