@@ -85,14 +85,25 @@ function updateTable(value){
         for(let y = 1; y < 3; y++){
             if(newArray[x][0] !== "+" && newArray[x][0] !== "="){                        
                 if(table.children[y].children[x].children[0] != value){
-                    if(table.children[y].children[x].children[0].value.includes(".")){
+                    if(table.children[y].children[x].children[0].value.startsWith(0)){
+                        if(table.children[y].children[x].children[0].value.includes(".")){
+                            table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substring(0,startValue.replaceAll(".","").length+2);
+                        }else{
+                            table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substring(0,startValue.replaceAll(".","").length+1);
+                        }
+                    }else{
+                        if(table.children[y].children[x].children[0].value.includes(".")){
                         table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substring(0,startValue.replaceAll(".","").length+1);
                     }else{
                         table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substring(0,startValue.replaceAll(".","").length);
                     }
+                    }
+
                     if (table.children[y].children[x].children[0].value.charAt(table.children[y].children[x].children[0].value.length - 1) == '.') {
                         table.children[y].children[x].children[0].value = table.children[y].children[x].children[0].value.substr(0, table.children[y].children[x].children[0].value.length - 1);
                       }
+
+
                 } else{
                     value.value = startValue;
                 }
@@ -164,8 +175,11 @@ function updateInput(value){
         }
         if(newValue[i] === ")"){
             stop = i;
-            for(let n = start+1; n<stop-start; n++){
-                newValue[n] = newValue[n].repeat(newValue[stop+1])
+            console.log(newValue[stop+1])
+            if(isNumeric(newValue[stop+1]) && newValue[stop+1] != "+" && newValue[stop+1] != "="){
+                for(let n = start+1; n<stop-start; n++){
+                    newValue[n] = newValue[n].repeat(newValue[stop+1])
+                }
             }
         }
     };
