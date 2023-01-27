@@ -178,6 +178,33 @@ async function recursive(combined, values, depth, max, split) {
     return values
 }
 // Paranthasese
+function unpackAllParentheses(str) {
+    let res = ""
+    let stack = []
+    let i = 0
+
+    while (i < str.length) {
+        if (str[i] == '(') {
+            let count = 1
+            i++
+            stack.push("")
+            while (count != 0) {
+                if (str[i] == '(') {
+                    stack.push("")
+                    count++
+                } else if (str[i] == ')') {
+                    count--
+                    i++
+                    if (count == 0) {res += stack.pop().repeat(str[i]) }
+                    else { stack[stack.length - 2] += stack.pop().repeat(str[i]) }
+                } else { stack[count - 1] += str[i] }
+                i++
+            }
+        } else { res += str[i]; i++ }
+    }
+    return res
+}
+
 function validateEquation(eq) {
     let t = eq.split('')
     if (count(t, '(') != count(t, ')')) { return false }
