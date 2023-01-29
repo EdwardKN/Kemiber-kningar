@@ -195,13 +195,32 @@ function unpackAllParentheses(str) {
                 } else if (str[i] == ')') {
                     count--
                     i++
-                    if (count == 0) {res += stack.pop().repeat(str[i]) }
-                    else { stack[stack.length - 2] += stack.pop().repeat(str[i]) }
+                    if (count == 0) {res += numbersAfter(stack.pop(), str[i]) }
+                    else { stack[stack.length - 2] += numbersAfter(stack.pop(), str[i]) }
                 } else { stack[count - 1] += str[i] }
                 i++
             }
         } else { res += str[i]; i++ }
     }
+    return res
+}
+
+function numbersAfter(str, num) {
+    let res = ""
+    let n = ""
+    for (let i = 0; i < str.length; i++) {
+        let char = str[i]
+
+        if (isDigit(char)) { n += char; continue }
+
+        if (char == char.toUpperCase() && res != "") {
+            res += n == "" ? num : n * num
+            res += char
+            n = ""
+        } else {
+            res += char
+        }
+    }; res += n * num
     return res
 }
 
