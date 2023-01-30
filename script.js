@@ -12,6 +12,8 @@ var newArray;
 
 var json;
 
+var moleMass = [];
+
 readTextFile("table.json", function(text){
     json = JSON.parse(text);
 });
@@ -50,11 +52,11 @@ function updateTable(value){
         
             if(tmpIndex2 === 1){
                 value.parentNode.parentNode.parentNode.children[2].children[tmpIndex].children[0].setAttribute("readonly","")
-                value.parentNode.parentNode.parentNode.children[2].children[tmpIndex].children[0].value = JSON.parse(value.parentNode.parentNode.parentNode.children[3].children[tmpIndex].innerText)*JSON.parse(value.value)
+                value.parentNode.parentNode.parentNode.children[2].children[tmpIndex].children[0].value = JSON.parse(moleMass[tmpIndex])*JSON.parse(value.value)
             }
             if(tmpIndex2 === 2){
                 value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].setAttribute("readonly","")
-                value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value = JSON.parse(value.value)/JSON.parse(value.parentNode.parentNode.parentNode.children[3].children[tmpIndex].innerText)
+                value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value = JSON.parse(value.value)/JSON.parse(moleMass[tmpIndex])
             }
             
                 for(let n = 1; n < newArray.length+1; n++){
@@ -70,7 +72,7 @@ function updateTable(value){
 
                     if(newArray[n-1][0] !== "+" && newArray[n-1][0] !== "="){   
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value = (amountArray[n]/amountArray[tmpIndex])*JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value)
-                        value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value)*JSON.parse(value.parentNode.parentNode.parentNode.children[3].children[n].innerText)
+                        value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value)*JSON.parse(moleMass[tmpIndex])
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].setAttribute("readonly","");
                         value.parentNode.parentNode.parentNode.children[2].children[n].children[0].setAttribute("readonly","");
                     }
@@ -78,7 +80,18 @@ function updateTable(value){
             
     
         }
-
+    for(let i = 1; i < newArray.length+1; i++){
+        moleMass[tmpIndex]
+        if(newArray[i-1][0] !== "+" && newArray[i-1][0] !== "="){      
+            if(value.value.startsWith(0)){
+                table.children[3].children[i].innerText = moleMass[(i-1)/2].toPrecision(startValue.replaceAll(".","").length)
+            }else if(value.value.includes(".")){
+                table.children[3].children[i].innerText = moleMass[(i-1)/2].toPrecision(startValue.replaceAll(".","").length)
+            }else{
+                table.children[3].children[i].innerText = moleMass[(i-1)/2].toPrecision(startValue.replaceAll(".","").length)
+            }   
+        }
+    }
     for(let x = 1; x < newArray.length+1; x++){
         for(let y = 1; y < 3; y++){
             if(newArray[x-1][0] !== "+" && newArray[x-1][0] !== "="){                        
@@ -248,8 +261,10 @@ function updateInput(value){
                         
 
                     })
+
                 })
-                
+
+                moleMass[n/2] = tmpValue;
                 td.innerText = tmpValue.toPrecision(5)
 
             }
@@ -264,31 +279,28 @@ function updateInput(value){
 init();
 
 function balance(){
+    
     calculate(document.getElementById("formel").value).then(result =>{
 
-        let newValue = document.getElementById("formel").value.split("")
+        let newValue = document.getElementById("formel").value
 
+        newValue = newValue.split("")
+        
         newValue = newValue.filter(item => !(item == ' '));
-        newValue = split(newValue)
+
+        newValue = newValue.join().replaceAll(",","")
+
+        newValue = trimBeginnings(newValue).split("");
+
+        newValue = split(newValue);
 
         for(i = 0; i<result.length*2; i+=2){
             newValue[i].unshift(JSON.stringify(result[i/2]))
         }
-        document.getElementById("formel").value = "";
-        newValue.forEach(newValueValue => {
-            newValueValue.forEach(newNewValueValue => {
-                if(newNewValueValue === "+" || newNewValueValue === "="){
-                    document.getElementById("formel").value += " ";
-                }
-                if(newNewValueValue !== "1"){
-                    document.getElementById("formel").value += newNewValueValue;
-                }
 
-                if(newNewValueValue === "+" || newNewValueValue === "="){
-                    document.getElementById("formel").value += " ";
-                }
-            })
-        })
+        document.getElementById("formel").value = newValue.join().replaceAll(",","");
+
+
         updateInput(document.getElementById("formel").value);
     })
 }
@@ -324,9 +336,9 @@ const split = (arr) => {
   };
 
   function isNumeric(str) {
-    if (typeof str != "string") return false // we only process strings!  
-    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-           !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+    if (typeof str != "string") return false
+    return !isNaN(str) && 
+           !isNaN(parseFloat(str)) 
   }
 
   function readTextFile(file, callback) {
@@ -339,9 +351,4 @@ const split = (arr) => {
         }
     }
     rawFile.send(null);
-}
-
-function UpperCaseArray(input) {
-    var result = input.replace(/([A-Z]+)/g, ",$1").replace(/^,/, "");
-    return result.split(",");
 }

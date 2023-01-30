@@ -96,6 +96,20 @@ function combineArrays(elements, values) {
         }
     }
     return result.sort()
+async function bruteForce(strings, amountOfEach) { // Object form
+    let combined = [...strings[0]].concat([...strings[1]]) // Combine
+
+    values = await recursive(combined, Array(combined.length).fill(1), 0, amountOfEach,
+    strings[0].length)
+    return values
+}
+
+function sortObj(obj) {
+    let temp = ""
+    Object.entries(obj).forEach(entry => {
+        temp += entry[0].repeat(entry[1])
+    })
+    return temp.split('').sort()
 }
 
 function isLower(string1, string2, element) {
@@ -178,6 +192,7 @@ function numbersAfter(str, num) {
     return res
 }
 
+
 async function calculate(equation) {
     await sleep(10)
 
@@ -185,12 +200,21 @@ async function calculate(equation) {
 
     let trimmed = equation.replaceAll(/(\r\n|\t|\n|\r| |)/gm, "") // Remove whitespaces
     
+    let newTrim = trimBeginnings(trimmed);
+    
     let removePar = unpackAllParentheses(trimmed)
 
     let divided = divideEquation(removePar) // Divide equation
     let rem = divideEquation(trimmed)
 
     let numbersSeperated = seperateNumbers(divided) //
+
+    let divided = divideEquation(unpackAllParentheses(newTrim)) // Divide equation
+    let rem = divideEquation(newTrim)
+
+    let numbersSeperated = seperateNumbers( deepCopy(divided) ) //
+    let strings = numbersSeperated[0] // Divided without numbers
+    let numbers = numbersSeperated[1] // Object with the strings as key and smallesCommonDenominator as value
 
     let strings = numbersSeperated[0] // Divided without numbers
     let max = numbersSeperated[1] // Object with the strings as key and smallesCommonDenominator as value
@@ -217,6 +241,35 @@ async function calculate(equation) {
         i++
     }); rem[index1] = rem[index1].join(' + ')})
 
-    console.log(`The function took ${eN - sT} milliseconds`)
+
     return output
+
+}
+// Fix small letters
+
+function trimBeginnings(string){
+    let tmpTrim = string.replaceAll("+", "#+#").split("#")
+
+    let tmpTrim2 = [];
+
+    tmpTrim.forEach(trim =>{
+        if(trim.includes("=")){
+            trim.replaceAll("=", "#=#").split("#").forEach(tmp3 => {
+                tmpTrim2.push(tmp3)
+            })
+        }else{
+            tmpTrim2.push(trim)
+        }
+    })
+
+    for(let i = 0; i < tmpTrim2.length; i++){
+        let tmp2 = tmpTrim2[i]
+
+        if(isNumeric(tmp2.charAt(0))){
+            tmpTrim2[i] = tmp2.substring(1);
+            i = 0;
+        }
+            
+    }
+    return tmpTrim2.join().replaceAll(",","")
 }
