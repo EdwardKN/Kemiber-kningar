@@ -97,7 +97,6 @@ function seperateNumbers(list) {
 }
 
 async function bruteForce(strings, amountOfEach) { // Object form
-    console.log(strings)
     let combined = [...strings[0]].concat([...strings[1]]) // Combine
 
     values = await recursive(combined, Array(combined.length).fill(1), 0, amountOfEach,
@@ -245,7 +244,6 @@ function validateEquation(eq) {
     }
 }
 //let test = "AgNO3+BaCl2=AgCl+Ba(NO3)2"
-//console.log(validateEquation(test))
 
 
 async function calculate(equation) {
@@ -259,7 +257,6 @@ async function calculate(equation) {
     let rem = divideEquation(trimmed)
 
     let numbersSeperated = seperateNumbers( deepCopy(divided) ) //
-    console.log()
     let strings = numbersSeperated[0] // Divided without numbers
     let numbers = numbersSeperated[1] // Object with the strings as key and smallesCommonDenominator as value
 
@@ -280,7 +277,6 @@ async function calculate(equation) {
         i++
     }); rem[index1] = rem[index1].join(' + ')})
 
-    console.log(`The function took ${eN - sT} milliseconds`)
     return output
 }
 // Fix small letters
