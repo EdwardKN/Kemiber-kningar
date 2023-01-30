@@ -9,17 +9,6 @@ function isEqual(arr1, arr2) {
     return arr1.every((item, index) => arr2[index] == item)
 }
 
-function deepCopy(arr) {
-    let res = []
-    for (let i = 0; i < arr.length; i++) {
-        res.push([])
-        for (let j = 0; j < arr[i].length; j++) {
-            res[i].push(arr[i][j])
-        }
-    }
-    return res
-}
-
 function lowestCommon(arr) {
     let most = {}
     let common = 1
@@ -69,48 +58,44 @@ function seperateNumbers(list) {
     let numbers = {}
     list.forEach((_, index) => _.forEach((item, index2) => {
         let digits = []
-        let res = ""
+        let res = []
         let cur = ""
         let curNum = ""
         for (let char of item) {
-
             if (isDigit(char)) {
                 curNum += char
             } else if (char != char.toUpperCase()) {
                 cur += char
             } else {
-                let num = curNum == "" ? 1 : parseInt(curNum)
-                res += cur.repeat(num) // Uppercase
-                digits.push(num)
-                curNum = ""
+                if (cur != "") {
+                    let num = curNum == "" ? 1 : parseInt(curNum)
+                    //res += cur.repeat(num) // Uppercase
+                    res.push(...Array(num).fill(cur))
+                    digits.push(num)
+                    curNum = ""
+                }
                 cur = char
             }
         }
         num = curNum == "" ? 1 : parseInt(curNum)
         digits.push(num)
-        res += cur.repeat(num)
+        //res += cur.repeat(num)
+        res.push(...Array(num).fill(cur))
         list[index][index2] = res
-        numbers[res] = lowestCommon(digits)
+        numbers[res.join().replaceAll(',', '')] = lowestCommon(digits)
     }))
-
     return [list, numbers]
 }
 
-async function bruteForce(strings, amountOfEach) { // Object form
-    console.log(strings)
-    let combined = [...strings[0]].concat([...strings[1]]) // Combine
-
-    values = await recursive(combined, Array(combined.length).fill(1), 0, amountOfEach,
-    strings[0].length)
-    return values
-}
-
-function sortObj(obj) {
-    let temp = ""
-    Object.entries(obj).forEach(entry => {
-        temp += entry[0].repeat(entry[1])
-    })
-    return temp.split('').sort()
+function combineArrays(elements, values) {
+    let result = []
+    if (elements.length !== values.length) { throw "combineArrays. Not equal lengths" }
+    for (let i = 0; i < elements.length; i++) {
+        for (let _ = 0; _ < values[i]; _++) {
+            result.push(...elements[i])
+        }
+    }
+    return result.sort()
 }
 
 function isLower(string1, string2, element) {
@@ -122,63 +107,31 @@ function isLower(string1, string2, element) {
     return true
 }
 
-function oneTooTwo(keys, values, split) {
-    if (keys.length !== values.length) { throw "oneTooTwo"}
-    let a = {}
-    let b = {}
-    for (let i = 0; i < keys.length; i++) {
-        if (i < split) {
-            a[keys[i]] = values[i]
-        } else { b[keys[i]] = values[i] }
-    }
-    return [a, b]
-}
-
-function arrToObj(keys, values) {
-    if (keys.length != values.length) { throw "arrToObj" }
-    let temp = {}
-    for (let i = 0; i < keys.length; i++) {
-        temp[keys[i]] = values[i]
-    }
-    return temp
-}
-
-
-
-
-
-
-
-//array["key"] = value
-
-
 async function recursive(combined, values, depth, max, split) {
     if (depth == combined.length) { return values }
     let element = combined[depth]
-    let res = oneTooTwo(combined, values, split)
-    let r = res[0]
-    let p = res[1]
+    let rC = [...combined]
+    let pC = rC.splice(split)
+    let rV = [...values]
+    let pV = rV.splice(split)
 
-
-    if (isEqual(sortObj(r), sortObj(p))) { return values }
-
-    for (let i = 1; i <= max[element]; i++) {
-
+    if (isEqual(combineArrays(rC, rV), combineArrays(pC, pV))) { return values }
+    for (let i = 1; i <= max[element.join('')]; i++) {
         values[depth] = i
         values = await recursive(combined, values, depth+1, max, split)
-        res = oneTooTwo(combined, values, split)
-        r = res[0]
-        p = res[1]
+        rV = [...values]
+        pV = rV.splice(split)
+
         if (depth >= split) { // Product
-            if (!isLower(sortObj(r), sortObj(p), combined[depth])) { break }
+            if (!isLower(combineArrays(rC, rV), combineArrays(pC, pV), combined[depth])) { break }
         }
-        if (isEqual(sortObj(r), sortObj(p))) { return values }
+        if (isEqual(combineArrays(rC, rV), combineArrays(pC, pV))) { return values }
 
     }
     values[depth] = 1
     return values
 }
-// Paranthasese
+
 function unpackAllParentheses(str) {
     let res = ""
     let stack = []
@@ -221,55 +174,39 @@ function numbersAfter(str, num) {
         } else {
             res += char
         }
-    }; res += n * num
+    }; res += n == "" ? num : n * num
     return res
 }
-
-function validateEquation(eq) {
-    let t = eq.split('')
-    if (count(t, '(') != count(t, ')')) { return false }
-
-    let lastP = ""
-    let check = false
-    let prev = ""
-    for (let char of eq) {
-        if (char == '(') { lastP == '(' }
-
-        
-        if (isDigit(char) && ['+', '=', ''].includes(prev)) { return false }   
-        if (char == char.toLowerCase() && (prev == prev.toLowerCase() || prev == '')) { return false } 
-        if (char == ')') {
-            if (lastP == '(') { lastP = ""; check = true } else { return false }
-        }
-        prev = char
-    }
-}
-//let test = "AgNO3+BaCl2=AgCl+Ba(NO3)2"
-//console.log(validateEquation(test))
-
 
 async function calculate(equation) {
     await sleep(10)
 
     let sT = performance.now()
 
-    let trimmed = equation.replace(/(\r\n|\t|\n|\r| )/gm, "") // Remove whitespaces
+    let trimmed = equation.replaceAll(/(\r\n|\t|\n|\r| |)/gm, "") // Remove whitespaces
     
-    let divided = divideEquation(unpackAllParentheses(trimmed)) // Divide equation
+    let removePar = unpackAllParentheses(trimmed)
+
+    let divided = divideEquation(removePar) // Divide equation
     let rem = divideEquation(trimmed)
 
-    let numbersSeperated = seperateNumbers( deepCopy(divided) ) //
-    console.log()
-    let strings = numbersSeperated[0] // Divided without numbers
-    let numbers = numbersSeperated[1] // Object with the strings as key and smallesCommonDenominator as value
+    let numbersSeperated = seperateNumbers(divided) //
 
-    let smallest = 2 * lowestCommon(Object.values(numbers)) // Smallest common denominator of all elements
+    let strings = numbersSeperated[0] // Divided without numbers
+    let max = numbersSeperated[1] // Object with the strings as key and smallesCommonDenominator as value
     
-    Object.entries(numbers).forEach(entry => { // Change numbers value so that there value is smallest common denominator / value
-        numbers[entry[0]] = smallest / entry[1]
+    let smallestCommon = 2 * lowestCommon(Object.values(max)) // Smallest common denominator of all elements
+
+    Object.entries(max).forEach(entry => { // Change numbers value so that there value is smallest common denominator / value
+        max[entry[0]] = smallestCommon / entry[1]
     })
 
-    let output = await bruteForce(strings, numbers) // Bruteforce
+    // Strings till array av strings
+
+    let combined = [...strings[0]].concat([...strings[1]])
+
+    let output = await recursive(combined, Array(combined.length).fill(1), 0,
+    max, strings[0].length)
 
     let eN = performance.now()
 
@@ -283,5 +220,3 @@ async function calculate(equation) {
     console.log(`The function took ${eN - sT} milliseconds`)
     return output
 }
-// Fix small letters
-
