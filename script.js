@@ -282,34 +282,25 @@ function balance(){
     
     calculate(document.getElementById("formel").value).then(result =>{
 
-        let newValue = document.getElementById("formel").value.split("")
+        let newValue = document.getElementById("formel").value
 
+        newValue = newValue.split("")
+        
         newValue = newValue.filter(item => !(item == ' '));
 
-        newValue = split(newValue)
+        newValue = newValue.join().replaceAll(",","")
 
-        if(isNumeric( newValue[0][0])){
-            newValue[0][0] = ""
-        }
+        newValue = trimBeginnings(newValue).split("");
+
+        newValue = split(newValue);
 
         for(i = 0; i<result.length*2; i+=2){
             newValue[i].unshift(JSON.stringify(result[i/2]))
         }
-        document.getElementById("formel").value = "";
-        newValue.forEach(newValueValue => {
-            newValueValue.forEach(newNewValueValue => {
-                if(newNewValueValue === "+" || newNewValueValue === "="){
-                    document.getElementById("formel").value += " ";
-                }
-                if(newNewValueValue !== "1"){
-                    document.getElementById("formel").value += newNewValueValue;
-                }
 
-                if(newNewValueValue === "+" || newNewValueValue === "="){
-                    document.getElementById("formel").value += " ";
-                }
-            })
-        })
+        document.getElementById("formel").value = newValue.join().replaceAll(",","");
+
+
         updateInput(document.getElementById("formel").value);
     })
 }

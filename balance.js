@@ -252,34 +252,9 @@ async function calculate(equation) {
     let sT = performance.now()
 
     let trimmed = equation.replace(/(\r\n|\t|\n|\r| )/gm, "") // Remove whitespaces
-
-    let tmpTrim = trimmed.replaceAll("+", "#+#").split("#")
-
-    let tmpTrim2 = [];
-
-    tmpTrim.forEach(trim =>{
-        if(trim.includes("=")){
-            trim.replaceAll("=", "#=#").split("#").forEach(tmp3 => {
-                tmpTrim2.push(tmp3)
-            })
-        }else{
-            tmpTrim2.push(trim)
-        }
-    })
     
-    let trimmedTmpTrim = []
-    tmpTrim2.forEach(trim =>{
-        if(isNumeric(trim.charAt(0))){
-            let tmp2 = trim.split(/[0-9]/g);
-            trimmedTmpTrim.push(tmp2[tmp2.length-1])
-        }else{
-            trimmedTmpTrim.push(trim)
-        }
-    })
-    
+    let newTrim = trimBeginnings(trimmed);
 
-    let newTrim = trimmedTmpTrim.join().replaceAll(",","")
-    
     let divided = divideEquation(unpackAllParentheses(newTrim)) // Divide equation
     let rem = divideEquation(newTrim)
 
@@ -308,3 +283,30 @@ async function calculate(equation) {
     return output
 }
 // Fix small letters
+
+function trimBeginnings(string){
+    let tmpTrim = string.replaceAll("+", "#+#").split("#")
+
+    let tmpTrim2 = [];
+
+    tmpTrim.forEach(trim =>{
+        if(trim.includes("=")){
+            trim.replaceAll("=", "#=#").split("#").forEach(tmp3 => {
+                tmpTrim2.push(tmp3)
+            })
+        }else{
+            tmpTrim2.push(trim)
+        }
+    })
+
+    for(let i = 0; i < tmpTrim2.length; i++){
+        let tmp2 = tmpTrim2[i]
+
+        if(isNumeric(tmp2.charAt(0))){
+            tmpTrim2[i] = tmp2.substring(1);
+            i = 0;
+        }
+            
+    }
+    return tmpTrim2.join().replaceAll(",","")
+}
