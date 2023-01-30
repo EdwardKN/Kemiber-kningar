@@ -279,12 +279,18 @@ function updateInput(value){
 init();
 
 function balance(){
+    
     calculate(document.getElementById("formel").value).then(result =>{
 
         let newValue = document.getElementById("formel").value.split("")
 
         newValue = newValue.filter(item => !(item == ' '));
+
         newValue = split(newValue)
+
+        if(isNumeric( newValue[0][0])){
+            newValue[0][0] = ""
+        }
 
         for(i = 0; i<result.length*2; i+=2){
             newValue[i].unshift(JSON.stringify(result[i/2]))

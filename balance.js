@@ -252,9 +252,36 @@ async function calculate(equation) {
     let sT = performance.now()
 
     let trimmed = equation.replace(/(\r\n|\t|\n|\r| )/gm, "") // Remove whitespaces
+
+    let tmpTrim = trimmed.replaceAll("+", "#+#").split("#")
+
+    let tmpTrim2 = [];
+
+    tmpTrim.forEach(trim =>{
+        if(trim.includes("=")){
+            trim.replaceAll("=", "#=#").split("#").forEach(tmp3 => {
+                tmpTrim2.push(tmp3)
+            })
+        }else{
+            tmpTrim2.push(trim)
+        }
+    })
     
-    let divided = divideEquation(unpackAllParentheses(trimmed)) // Divide equation
-    let rem = divideEquation(trimmed)
+    let trimmedTmpTrim = []
+    tmpTrim2.forEach(trim =>{
+        if(isNumeric(trim.charAt(0))){
+            let tmp2 = trim.split(/[0-9]/g);
+            trimmedTmpTrim.push(tmp2[tmp2.length-1])
+        }else{
+            trimmedTmpTrim.push(trim)
+        }
+    })
+    
+
+    let newTrim = trimmedTmpTrim.join().replaceAll(",","")
+    
+    let divided = divideEquation(unpackAllParentheses(newTrim)) // Divide equation
+    let rem = divideEquation(newTrim)
 
     let numbersSeperated = seperateNumbers( deepCopy(divided) ) //
     let strings = numbersSeperated[0] // Divided without numbers
@@ -277,7 +304,7 @@ async function calculate(equation) {
         i++
     }); rem[index1] = rem[index1].join(' + ')})
 
+
     return output
 }
 // Fix small letters
-
