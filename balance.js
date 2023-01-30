@@ -97,6 +97,7 @@ function seperateNumbers(list) {
 }
 
 async function bruteForce(strings, amountOfEach) { // Object form
+    console.log(strings)
     let combined = [...strings[0]].concat([...strings[1]]) // Combine
 
     values = await recursive(combined, Array(combined.length).fill(1), 0, amountOfEach,
@@ -253,9 +254,10 @@ async function calculate(equation) {
     let sT = performance.now()
 
     let trimmed = equation.replace(/(\r\n|\t|\n|\r| )/gm, "") // Remove whitespaces
-
-    let divided = divideEquation(trimmed) // Divide equation
     
+    let divided = divideEquation(unpackAllParentheses(trimmed)) // Divide equation
+    let rem = divideEquation(trimmed)
+
     let numbersSeperated = seperateNumbers( deepCopy(divided) ) //
     console.log()
     let strings = numbersSeperated[0] // Divided without numbers
@@ -272,11 +274,11 @@ async function calculate(equation) {
     let eN = performance.now()
 
     let i = 0
-    divided.forEach((_, index1) => {
+    rem.forEach((_, index1) => {
         _.forEach((_, index2) => {
-        if (output[i] != 1) divided[index1][index2] = `${output[i]}${divided[index1][index2]}`
+        if (output[i] != 1) rem[index1][index2] = `${output[i]}${rem[index1][index2]}`
         i++
-    }); divided[index1] = divided[index1].join(' + ')})
+    }); rem[index1] = rem[index1].join(' + ')})
 
     console.log(`The function took ${eN - sT} milliseconds`)
     return output
