@@ -324,9 +324,9 @@ const split = (arr) => {
   };
 
   function isNumeric(str) {
-    if (typeof str != "string") return false // we only process strings!  
-    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-           !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+    if (typeof str != "string") return false
+    return !isNaN(str) && 
+           !isNaN(parseFloat(str)) 
   }
 
   function readTextFile(file, callback) {
@@ -339,9 +339,4 @@ const split = (arr) => {
         }
     }
     rawFile.send(null);
-}
-
-function UpperCaseArray(input) {
-    var result = input.replace(/([A-Z]+)/g, ",$1").replace(/^,/, "");
-    return result.split(",");
 }
