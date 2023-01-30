@@ -96,6 +96,7 @@ function combineArrays(elements, values) {
         }
     }
     return result.sort()
+}
 async function bruteForce(strings, amountOfEach) { // Object form
     let combined = [...strings[0]].concat([...strings[1]]) // Combine
 
@@ -202,25 +203,18 @@ async function calculate(equation) {
     
     let newTrim = trimBeginnings(trimmed);
     
-    let removePar = unpackAllParentheses(trimmed)
+
+    let removePar = unpackAllParentheses(newTrim)
 
     let divided = divideEquation(removePar) // Divide equation
-    let rem = divideEquation(trimmed)
+    let rem = divideEquation(newTrim)
 
     let numbersSeperated = seperateNumbers(divided) //
 
-    let divided = divideEquation(unpackAllParentheses(newTrim)) // Divide equation
-    let rem = divideEquation(newTrim)
-
-    let numbersSeperated = seperateNumbers( deepCopy(divided) ) //
-    let strings = numbersSeperated[0] // Divided without numbers
-    let numbers = numbersSeperated[1] // Object with the strings as key and smallesCommonDenominator as value
-
     let strings = numbersSeperated[0] // Divided without numbers
     let max = numbersSeperated[1] // Object with the strings as key and smallesCommonDenominator as value
-    
-    let smallestCommon = 2 * lowestCommon(Object.values(max)) // Smallest common denominator of all elements
 
+    let smallestCommon = 2 * lowestCommon(Object.values(max)) // Smallest common denominator of all elements
     Object.entries(max).forEach(entry => { // Change numbers value so that there value is smallest common denominator / value
         max[entry[0]] = smallestCommon / entry[1]
     })
@@ -243,8 +237,8 @@ async function calculate(equation) {
 
 
     return output
+    }
 
-}
 // Fix small letters
 
 function trimBeginnings(string){
