@@ -299,6 +299,7 @@ function balance(){
             }
         }
 
+
         let newNewValue = newValue.join().replaceAll(",","").replaceAll("+"," + ").replaceAll("=", " = ")
 
         document.getElementById("formel").value = newNewValue
