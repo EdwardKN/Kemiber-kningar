@@ -298,7 +298,8 @@ function balance(){
             newValue[i].unshift(JSON.stringify(result[i/2]))
         }
 
-        document.getElementById("formel").value = newValue.join().replaceAll(",","");
+        document.getElementById("formel").value = newValue.join().
+        replaceAll(",","").replace(/\+|=/g, match => ` ${match} `);
 
 
         updateInput(document.getElementById("formel").value);

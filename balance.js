@@ -13,9 +13,14 @@ function isEqual(arr1, arr2) {
     return arr1.every((item, index) => arr2[index] == item)
 }
 
-function lowestCommon(arr) {
+function divideEquation(equation) {
+    return equation.split('=').map(side => side.split('+'))
+}
+
+function lowestCommon(arr) { // 1d arr with numbers
     let most = {}
     let common = 1
+
     arr.forEach(factors => {
         factors = getPrimeFactors(factors)
         for (let n of factors) {
@@ -26,6 +31,7 @@ function lowestCommon(arr) {
             }
         }
     })
+
     for (let entry of Object.entries(most)) {
         common *= Math.pow(entry[0], entry[1])
     }
@@ -33,10 +39,10 @@ function lowestCommon(arr) {
 }
 
 function getPrimeFactors(n) {
-    if (n == 1) { return [1] }
+    if (n <= 1) { return [n] }
     let factors = []
 
-    while (n % 2 == 0) {
+    while (n != 0 && n % 2 == 0) {
         factors.push(2)
         n = n >> 1
     }
@@ -45,17 +51,9 @@ function getPrimeFactors(n) {
             factors.push(i)
             n /= i
         }
-    }
-    if (n != 1) { factors.push(n) }
+    }; if (n != 1) {factors.push(n)}
     
     return factors
-}
-
-function divideEquation(equation) {
-    equation = equation.split("=")
-    equation[0] = equation[0].split('+')
-    equation[1] = equation[1].split('+')
-    return equation
 }
 
 function seperateNumbers(list) {
@@ -101,6 +99,7 @@ function combineArrays(elements, values) {
 }
 
 async function recursive(combined, values, depth, max, split) {
+    
     if (depth == combined.length) { return values }
     let element = combined[depth]
     let rC = [...combined]
@@ -178,23 +177,22 @@ async function calculate(equation) {
 
     let trimmed = equation.replace(/(\r\n|\t|\n|\r| |)/g, "") // Remove whitespaces
     trimmed = trimmed.replace(/^\d+|[+=]\d+/g, match => match.replace(/\d+/g, ""))
-
     let removePar = unpackAllParentheses(trimmed)
 
     let divided = divideEquation(removePar) // Divide equation
     let rem = divideEquation(trimmed)
 
-    let numbersSeperated = seperateNumbers(divided) //
+    let numbersSeperated = seperateNumbers(divided)
 
     let strings = numbersSeperated[0] // Divided without numbers
     let max = numbersSeperated[1] // Object with the strings as key and smallesCommonDenominator as value
     
-    let smallestCommon = 2 * lowestCommon(Object.values(max)) // Smallest common denominator of all elements
-
+    let smallestCommon = 4 * lowestCommon(Object.values(max)) // Smallest common denominator of all elements
+    
     Object.entries(max).forEach(entry => { // Change numbers value so that there value is smallest common denominator / value
         max[entry[0]] = smallestCommon / entry[1]
     })
-
+    
     // Strings till array av strings
 
     let combined = [...strings[0]].concat([...strings[1]])
