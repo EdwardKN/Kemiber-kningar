@@ -265,10 +265,10 @@ async function calculate(equation) {
     
     let newTrim = trimBeginnings(trimmed);
     
-    let removePar = unpackAllParentheses(trimmed)
+    let removePar = unpackAllParentheses(newTrim)
 
     let divided = divideEquation(removePar) // Divide equation
-    let rem = divideEquation(trimmed)
+    let rem = divideEquation(newTrim)
 
     let numbersSeperated = seperateNumbers(divided) //
 
