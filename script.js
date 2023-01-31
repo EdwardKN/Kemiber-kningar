@@ -52,11 +52,11 @@ function updateTable(value){
         
             if(tmpIndex2 === 1){
                 value.parentNode.parentNode.parentNode.children[2].children[tmpIndex].children[0].setAttribute("readonly","")
-                value.parentNode.parentNode.parentNode.children[2].children[tmpIndex].children[0].value = JSON.parse(moleMass[tmpIndex])*JSON.parse(value.value)
+                value.parentNode.parentNode.parentNode.children[2].children[tmpIndex].children[0].value = JSON.parse(moleMass[tmpIndex-1])*JSON.parse(value.value)
             }
             if(tmpIndex2 === 2){
                 value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].setAttribute("readonly","")
-                value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value = JSON.parse(value.value)/JSON.parse(moleMass[tmpIndex])
+                value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value = JSON.parse(value.value)/JSON.parse(moleMass[tmpIndex-1])
             }
             
                 for(let n = 1; n < newArray.length+1; n++){
@@ -70,9 +70,9 @@ function updateTable(value){
                 }
                 for(let n = 1; n < newArray.length+1; n++){
 
-                    if(newArray[n-1][0] !== "+" && newArray[n-1][0] !== "="){   
+                    if(newArray[n-1][0] !== "+" && newArray[n-1][0] !== "="){
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value = (amountArray[n]/amountArray[tmpIndex])*JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value)
-                        value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value)*JSON.parse(moleMass[tmpIndex])
+                        value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = ((JSON.parse(value.value)/JSON.parse(moleMass[tmpIndex-1])))*(moleMass[(n-1)/2])*(amountArray[n]/amountArray[tmpIndex])
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].setAttribute("readonly","");
                         value.parentNode.parentNode.parentNode.children[2].children[n].children[0].setAttribute("readonly","");
                     }
@@ -81,7 +81,6 @@ function updateTable(value){
     
         }
     for(let i = 1; i < newArray.length+1; i++){
-        moleMass[tmpIndex]
         if(newArray[i-1][0] !== "+" && newArray[i-1][0] !== "="){      
             if(value.value.startsWith(0)){
                 table.children[3].children[i].innerText = moleMass[(i-1)/2].toPrecision(startValue.replaceAll(".","").length)
@@ -295,11 +294,15 @@ function balance(){
         newValue = split(newValue);
 
         for(i = 0; i<result.length*2; i+=2){
-            newValue[i].unshift(JSON.stringify(result[i/2]))
+            if(result[i/2] !== 1){
+                newValue[i].unshift(JSON.stringify(result[i/2]))
+            }
         }
 
-        document.getElementById("formel").value = newValue.join().
-        replaceAll(",","").replace(/\+|=/g, match => ` ${match} `);
+
+        let newNewValue = newValue.join().replaceAll(",","").replaceAll("+"," + ").replaceAll("=", " = ")
+
+        document.getElementById("formel").value = newNewValue
 
 
         updateInput(document.getElementById("formel").value);
@@ -340,10 +343,6 @@ function deep_value(obj, path){
     };
     return obj;
 };
-
-
-
-
 
 const split = (arr) => {
     const output = [];
