@@ -305,6 +305,33 @@ function balance(){
     })
 }
 
+function trimBeginnings(string){
+    let tmpTrim = string.replaceAll("+", "#+#").split("#")
+
+    let tmpTrim2 = [];
+
+    tmpTrim.forEach(trim =>{
+        if(trim.includes("=")){
+            trim.replaceAll("=", "#=#").split("#").forEach(tmp3 => {
+                tmpTrim2.push(tmp3)
+            })
+        }else{
+            tmpTrim2.push(trim)
+        }
+    })
+
+    for(let i = 0; i < tmpTrim2.length; i++){
+        let tmp2 = tmpTrim2[i]
+
+        if(isNumeric(tmp2.charAt(0))){
+            tmpTrim2[i] = tmp2.substring(1);
+            i = 0;
+        }
+            
+    }
+    return tmpTrim2.join().replaceAll(",","")
+}
+
 
 function deep_value(obj, path){
     for (var i=0, path=path.split('.'), len=path.length; i<len; i++){
