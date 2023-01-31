@@ -295,7 +295,9 @@ function balance(){
         newValue = split(newValue);
 
         for(i = 0; i<result.length*2; i+=2){
-            newValue[i].unshift(JSON.stringify(result[i/2]))
+            if(result[i/2] !== 1){
+                newValue[i].unshift(JSON.stringify(result[i/2]))
+            }
         }
 
         document.getElementById("formel").value = newValue.join().replaceAll(",","");
@@ -339,10 +341,6 @@ function deep_value(obj, path){
     };
     return obj;
 };
-
-
-
-
 
 const split = (arr) => {
     const output = [];
