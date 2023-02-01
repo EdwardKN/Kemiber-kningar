@@ -70,9 +70,8 @@ function updateTable(value){
                 }
                 for(let n = 1; n < newArray.length+1; n++){
                     if(newArray[n-1][0] !== "+" && newArray[n-1][0] !== "=" && n != tmpIndex){
-                        console.log((moleMass[(n-1)/2])*(amountArray[n]/amountArray[tmpIndex]))
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value = (amountArray[n]/amountArray[tmpIndex])*JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value)
-                        value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = (moleMass[(n-1)/2])*(amountArray[n]/amountArray[tmpIndex])
+                        value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = ((moleMass[(n-1)/2])* (amountArray[n]/amountArray[tmpIndex])*JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value))
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].setAttribute("readonly","");
                         value.parentNode.parentNode.parentNode.children[2].children[n].children[0].setAttribute("readonly","");
                     }
