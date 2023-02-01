@@ -109,6 +109,7 @@ async function recursive(combined, values, depth, max, split) {
 
     if (isEqual(combineArrays(rC, rV), combineArrays(pC, pV))) { return values }
     for (let i = 1; i <= max[element.join('')]; i++) {
+        console.log(values)
         values[depth] = i
         values = await recursive(combined, values, depth+1, max, split)
         rV = [...values]
