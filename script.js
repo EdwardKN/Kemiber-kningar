@@ -278,7 +278,7 @@ init();
 
 function balance(){
     
-    calculate(document.getElementById("formel").value).then(result =>{
+    calculate(trimBeginnings(document.getElementById("formel").value.split("").filter(item => !(item == ' ')).join().replaceAll(",",""))).then(result =>{
 
         let newValue = document.getElementById("formel").value
 
@@ -289,6 +289,7 @@ function balance(){
         newValue = newValue.join().replaceAll(",","")
 
         newValue = trimBeginnings(newValue).split("");
+
 
         newValue = split(newValue);
 
