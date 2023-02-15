@@ -109,7 +109,6 @@ async function recursive(combined, values, depth, max, split) {
 
     if (isEqual(combineArrays(rC, rV), combineArrays(pC, pV))) { return values }
     for (let i = 1; i <= max[element.join('')]; i++) {
-        console.log(values)
         values[depth] = i
         values = await recursive(combined, values, depth+1, max, split)
         rV = [...values]
@@ -213,3 +212,68 @@ async function calculate(equation) {
     console.log(`The function took ${eN - sT} milliseconds`)
     return output
 }
+
+function stringToCharFrequencyObject(strs) {
+    let result = {}
+    for (let str of strs) {
+        result[str] = {}
+      for (let char of str) {
+        result[str][char] = (result[str][char] || 0) + 1
+      }
+    }
+    return result
+}
+
+async function testing(equation) { // Already checked equation
+    // Fix
+    let trimmed = equation.replace(/(\r\n|\t|\n|\r| )/gm, "") // Remove whitespaces
+    let rem = trimmed.split('=')
+    rem[0] = rem[0].split('+')
+    rem[1] = rem[1].split('+')
+    let removePar = unpackAllParentheses(trimmed)
+    let a = seperateNumbers(divideEquation(removePar))[0]
+    a.forEach((_, index)=> _.forEach((p, index2) => { a[index][index2] = p.join('') }))
+    //-----------------------------------------------
+    // Idk Just Works I Guess
+    let s = performance.now()
+    let r = a[0] // List of strs
+    let p = a[1] // List of strs
+    let elements = r.concat(p) // Keep track of all elements when searching
+    let combined = stringToCharFrequencyObject(elements) // Object of all elements, and the amount of each character
+    let values = elements.reduce((obj, key) => (obj[key] = null, obj), {}) // Object of all elements, with mole value
+    let unique = Array.from(new Set(elements.join('')))// Array of all unique characters in all combined
+
+    let n = 1
+    while (!Object.values(values).every(x => x != null && x % 1 == 0)) {
+        Object.keys(values).forEach(key => values[key] = null) // Reset keys
+        values[Object.keys(combined)[0]] = n // Update first element mole in reaction
+
+        // Check characters
+        let i = 0
+        while (i < unique.length) {
+            let char = unique[i]
+            let elsWithLet = elements.filter(x => x.includes(char)) // All elements with char in them
+            let none = elsWithLet.filter(x => values[x] == null) // Filter out all elements with no value
+            if (none.length == 1) {
+                none = none[0]
+                elsWithLet = elsWithLet.filter(x => x != none)
+                let left = r.includes(none) ? 1 : -1 // Reactant or Product 
+                let amount = 0
+                for (let element of elsWithLet) {
+                    if (r.includes(element)) {
+                        amount -= left * combined[element][char] * values[element]
+                    } else {
+                        amount += left * combined[element][char] * values[element]
+                    }
+                }
+                values[none] = amount / combined[none][char]
+                i = 0
+            } else { i++ }
+        }
+        n++
+    }
+    let e = performance.now()
+    console.log(`The function Testing took ${e - s} milliseconds`)
+    return values
+}
+

@@ -278,9 +278,10 @@ function updateInput(value){
 init();
 
 function balance(){
-    
-    calculate(document.getElementById("formel").value).then(result =>{
+    testing(document.getElementById("formel").value).then(result =>{
 
+        result = Object.entries(result).map(e => e = e[1])
+        
         let newValue = document.getElementById("formel").value
 
         newValue = newValue.split("")
