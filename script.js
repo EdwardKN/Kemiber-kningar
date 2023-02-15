@@ -69,10 +69,9 @@ function updateTable(value){
 
                 }
                 for(let n = 1; n < newArray.length+1; n++){
-
-                    if(newArray[n-1][0] !== "+" && newArray[n-1][0] !== "="){
+                    if(newArray[n-1][0] !== "+" && newArray[n-1][0] !== "=" && n != tmpIndex){
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].value = (amountArray[n]/amountArray[tmpIndex])*JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value)
-                        value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = ((JSON.parse(value.value)/JSON.parse(moleMass[tmpIndex-1])))*(moleMass[(n-1)/2])*(amountArray[n]/amountArray[tmpIndex])
+                        value.parentNode.parentNode.parentNode.children[2].children[n].children[0].value = ((moleMass[(n-1)/2])* (amountArray[n]/amountArray[tmpIndex])*JSON.parse(value.parentNode.parentNode.parentNode.children[1].children[tmpIndex].children[0].value))
                         value.parentNode.parentNode.parentNode.children[1].children[n].children[0].setAttribute("readonly","");
                         value.parentNode.parentNode.parentNode.children[2].children[n].children[0].setAttribute("readonly","");
                     }
@@ -278,7 +277,8 @@ function updateInput(value){
 init();
 
 function balance(){
-    testing(document.getElementById("formel").value).then(result =>{
+
+    testing(trimBeginnings(document.getElementById("formel").value.split("").filter(item => !(item == ' ')).join().replaceAll(",",""))).then(result =>{
 
         result = Object.entries(result).map(e => e = e[1])
         
@@ -291,6 +291,7 @@ function balance(){
         newValue = newValue.join().replaceAll(",","")
 
         newValue = trimBeginnings(newValue).split("");
+
 
         newValue = split(newValue);
 
