@@ -277,9 +277,11 @@ function updateInput(value){
 init();
 
 function balance(){
-    
-    calculate(trimBeginnings(document.getElementById("formel").value.split("").filter(item => !(item == ' ')).join().replaceAll(",",""))).then(result =>{
 
+    testing(trimBeginnings(document.getElementById("formel").value.split("").filter(item => !(item == ' ')).join().replaceAll(",",""))).then(result =>{
+
+        result = Object.entries(result).map(e => e = e[1])
+        
         let newValue = document.getElementById("formel").value
 
         newValue = newValue.split("")
