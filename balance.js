@@ -209,7 +209,6 @@ async function calculate(equation) {
         i++
     }); rem[index1] = rem[index1].join(' + ')})
 
-    console.log(`The function took ${eN - sT} milliseconds`)
     return output
 }
 
@@ -288,6 +287,5 @@ async function testing(equation) { // Already checked equation
         n++
     }
     let e = performance.now()
-    console.log(`The function Testing took ${e - s} milliseconds`)
-    return values
+    return [values,e-s]
 }

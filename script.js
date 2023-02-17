@@ -14,6 +14,8 @@ var json;
 
 var moleMass = [];
 
+var lastTime = 0;
+
 readTextFile("table.json", function(text){
     json = JSON.parse(text);
 });
@@ -193,9 +195,10 @@ function updateInput(value){
     
 
     
-
+    
     newArray = split(newValue);
     
+
     for(let n = 0; n<Object.entries(rows).length;n++ ){
         let td = document.createElement("td")
         td.innerText = Object.entries(rows)[n][1]
@@ -214,11 +217,12 @@ function updateInput(value){
 
                 td2 = document.createElement("td");
                 let but = document.createElement("button");
-                but.innerText = "Balance"
+                but.innerText = "Balance ("+ lastTime + "ms)"
                 but.setAttribute("onclick","balance()")
                 td2.appendChild(but)
-                table.children[i].appendChild(td)
-                table.children[i].appendChild(td2)
+
+                table.children[i].appendChild(td);
+                table.children[i].appendChild(td2);
             }
             
             if(i != 4){
@@ -280,7 +284,8 @@ function balance(){
 
     testing(trimBeginnings(document.getElementById("formel").value.split("").filter(item => !(item == ' ')).join().replaceAll(",",""))).then(result =>{
 
-        result = Object.entries(result).map(e => e = e[1])
+        lastTime = result[1]
+        result = Object.entries(result[0]).map(e => e = e[1])
         
         let newValue = document.getElementById("formel").value
 
