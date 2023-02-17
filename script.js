@@ -1,4 +1,6 @@
-var table;
+var table = document.createElement("table");
+
+document.body.appendChild(table);
 
 var rows = {
     formel:"Formula",
@@ -21,12 +23,9 @@ readTextFile("table.json", function(text){
 });
 
 
-function init(){
-    table = document.createElement("table");
     
     
-    document.body.appendChild(table);
-}
+
 
 function updateTable(value){
     let tmpIndex;
@@ -278,7 +277,6 @@ function updateInput(value){
 }
 }
 
-init();
 
 function balance(){
 
