@@ -50,6 +50,7 @@ function numbersAfter(str, num) {
     return res
 }
 
+
 async function stringToCharFrequencyObject(strs) {
     let result = {}
     for (let str of strs) {
@@ -133,5 +134,6 @@ async function testing(equation) { // Already checked equation
     }
     let e = performance.now()
 
-    return values
+    return [values,e-s]
+
 }
