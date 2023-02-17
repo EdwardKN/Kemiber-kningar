@@ -213,13 +213,16 @@ async function calculate(equation) {
     return output
 }
 
-function stringToCharFrequencyObject(strs) {
+async function stringToCharFrequencyObject(strs) {
     let result = {}
     for (let str of strs) {
         result[str] = {}
+        let usedLetters = []
       for (let char of str) {
-        result[str][char] = (result[str][char] || 0) + 1
-      }
+        if (usedLetters.includes(char)) { continue }
+        usedLetters.push(char)
+        result[str][char] = count(str, char)
+        }
     }
     return result
 }
@@ -232,19 +235,28 @@ async function testing(equation) { // Already checked equation
     rem[1] = rem[1].split('+')
     let removePar = unpackAllParentheses(trimmed)
     let a = seperateNumbers(divideEquation(removePar))[0]
-    a.forEach((_, index)=> _.forEach((p, index2) => { a[index][index2] = p.join('') }))
+
     //-----------------------------------------------
-    // Idk Just Works I Guess
     let s = performance.now()
+    // Idk Just Works I Guess
     let r = a[0] // List of strs
     let p = a[1] // List of strs
     let elements = r.concat(p) // Keep track of all elements when searching
-    let combined = stringToCharFrequencyObject(elements) // Object of all elements, and the amount of each character
+
+    let combined = await stringToCharFrequencyObject(elements) // Object of all elements, and the amount of each character
+
     let values = elements.reduce((obj, key) => (obj[key] = null, obj), {}) // Object of all elements, with mole value
-    let unique = Array.from(new Set(elements.join('')))// Array of all unique characters in all combined
+
+    let unique = Array.from(new Set(a[0].concat.apply([], a[0]).concat(a[1].concat.apply([], a[1])))) // Array of all unique characters in all combined
 
     let n = 1
     while (!Object.values(values).every(x => x != null && x % 1 == 0)) {
+        await sleep(1)
+        if (performance.now() - s >= 1000) {
+            Object.keys(values).forEach(key => values[key] = 1)
+            break
+        }
+
         Object.keys(values).forEach(key => values[key] = null) // Reset keys
         values[Object.keys(combined)[0]] = n // Update first element mole in reaction
 
@@ -252,12 +264,15 @@ async function testing(equation) { // Already checked equation
         let i = 0
         while (i < unique.length) {
             let char = unique[i]
+
             let elsWithLet = elements.filter(x => x.includes(char)) // All elements with char in them
             let none = elsWithLet.filter(x => values[x] == null) // Filter out all elements with no value
-            if (none.length == 1) {
+
+            if (none.length === 1) {
                 none = none[0]
                 elsWithLet = elsWithLet.filter(x => x != none)
                 let left = r.includes(none) ? 1 : -1 // Reactant or Product 
+                none = none.join(',')
                 let amount = 0
                 for (let element of elsWithLet) {
                     if (r.includes(element)) {
@@ -276,4 +291,3 @@ async function testing(equation) { // Already checked equation
     console.log(`The function Testing took ${e - s} milliseconds`)
     return values
 }
-
