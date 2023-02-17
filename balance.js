@@ -132,7 +132,6 @@ async function testing(equation) { // Already checked equation
         n++
     }
     let e = performance.now()
-    console.log(`The function Testing took ${e - s} milliseconds`)
-    console.log(values)
+
     return values
 }
