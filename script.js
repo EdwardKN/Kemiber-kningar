@@ -319,6 +319,7 @@ function balance(){
 function trimBeginnings(string){
     let tmpTrim = string.replaceAll("+", "#+#").split("#")
 
+
     let tmpTrim2 = [];
 
     tmpTrim.forEach(trim =>{
@@ -336,10 +337,12 @@ function trimBeginnings(string){
 
         if(isNumeric(tmp2.charAt(0))){
             tmpTrim2[i] = tmp2.substring(1);
-            i = 0;
+            i = -1;
         }
             
     }
+
+
     return tmpTrim2.join().replaceAll(",","")
 }
 
