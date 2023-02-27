@@ -1,4 +1,6 @@
-var table;
+var table = document.createElement("table");
+
+document.body.appendChild(table);
 
 var rows = {
     formel:"Formula",
@@ -21,12 +23,9 @@ readTextFile("table.json", function(text){
 });
 
 
-function init(){
-    table = document.createElement("table");
     
     
-    document.body.appendChild(table);
-}
+
 
 function updateTable(value){
     let tmpIndex;
@@ -278,7 +277,6 @@ function updateInput(value){
 }
 }
 
-init();
 
 function balance(){
 
@@ -319,6 +317,7 @@ function balance(){
 function trimBeginnings(string){
     let tmpTrim = string.replaceAll("+", "#+#").split("#")
 
+
     let tmpTrim2 = [];
 
     tmpTrim.forEach(trim =>{
@@ -336,10 +335,12 @@ function trimBeginnings(string){
 
         if(isNumeric(tmp2.charAt(0))){
             tmpTrim2[i] = tmp2.substring(1);
-            i = 0;
+            i = -1;
         }
             
     }
+
+
     return tmpTrim2.join().replaceAll(",","")
 }
 
