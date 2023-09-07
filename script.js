@@ -1,4 +1,6 @@
-var table;
+var table = document.createElement("table");
+
+document.body.appendChild(table);
 
 var rows = {
     formel:"Formula",
@@ -14,17 +16,16 @@ var json;
 
 var moleMass = [];
 
+var lastTime = 0;
+
 readTextFile("table.json", function(text){
     json = JSON.parse(text);
 });
 
 
-function init(){
-    table = document.createElement("table");
     
     
-    document.body.appendChild(table);
-}
+
 
 function updateTable(value){
     let tmpIndex;
@@ -193,8 +194,9 @@ function updateInput(value){
     
 
     
-
+    
     newArray = split(newValue);
+    
     for(let n = 0; n<Object.entries(rows).length;n++ ){
         let td = document.createElement("td")
         td.innerText = Object.entries(rows)[n][1]
@@ -213,11 +215,12 @@ function updateInput(value){
 
                 td2 = document.createElement("td");
                 let but = document.createElement("button");
-                but.innerText = "Balance"
+                but.innerText = "Balance ("+ lastTime + "ms)"
                 but.setAttribute("onclick","balance()")
                 td2.appendChild(but)
-                table.children[i].appendChild(td)
-                table.children[i].appendChild(td2)
+
+                table.children[i].appendChild(td);
+                table.children[i].appendChild(td2);
             }
             
             if(i != 4){
@@ -263,13 +266,13 @@ function updateInput(value){
 }
 }
 
-init();
 
 function balance(){
 
     testing(trimBeginnings(document.getElementById("formel").value.split("").filter(item => !(item == ' ')).join().replaceAll(",",""))).then(result =>{
 
-        result = Object.entries(result).map(e => e = e[1])
+        lastTime = result[1]
+        result = Object.entries(result[0]).map(e => e = e[1])
         
         let newValue = document.getElementById("formel").value
 
@@ -303,6 +306,7 @@ function balance(){
 function trimBeginnings(string){
     let tmpTrim = string.replaceAll("+", "#+#").split("#")
 
+
     let tmpTrim2 = [];
 
     tmpTrim.forEach(trim =>{
@@ -320,10 +324,12 @@ function trimBeginnings(string){
 
         if(isNumeric(tmp2.charAt(0))){
             tmpTrim2[i] = tmp2.substring(1);
-            i = 0;
+            i = -1;
         }
             
     }
+
+
     return tmpTrim2.join().replaceAll(",","")
 }
 
