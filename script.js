@@ -197,7 +197,6 @@ function updateInput(value){
     
     newArray = split(newValue);
     
-
     for(let n = 0; n<Object.entries(rows).length;n++ ){
         let td = document.createElement("td")
         td.innerText = Object.entries(rows)[n][1]
@@ -216,7 +215,7 @@ function updateInput(value){
 
                 td2 = document.createElement("td");
                 let but = document.createElement("button");
-                but.innerText = "Balance ("+ lastTime + "ms)"
+                but.innerText = "Balance ("+ lastTime.toPrecision(2) + "ms)"
                 but.setAttribute("onclick","balance()")
                 td2.appendChild(but)
 
@@ -249,24 +248,14 @@ function updateInput(value){
                 td.appendChild(tmp);
             }
             if(i === 3 && split(oldNewValue)[n][0] !== "+" && split(oldNewValue)[n][0] !== "="){
-                let tmpValue = 0;
-                deep_value(json,"elements").forEach(element => {
-                    
-                    newArray[n].forEach(valueThing =>{
+                let tempMass = 0
+                for (let el of newArray[n].filter(e => e !== '(' && e !== ')' && !e.match(/[0-9]+/g))) {
+                    let atom = el.match(/[A-Z][a-z]?/)[0]
+                    tempMass += json.elements.filter(e => deep_value(e, 'symbol') === atom)[0].atomic_mass * el.length / atom.length
+                }
 
-                        valueThing.replace(/\d+|[A-Z]/g, '~$&').split('~').forEach(valueThing2 => {
-                            if(valueThing2 == (deep_value(element,"symbol"))){
-                                tmpValue+=deep_value(element,"atomic_mass")
-                            }
-                        });
-                        
-
-                    })
-
-                })
-
-                moleMass[n/2] = tmpValue;
-                td.innerText = tmpValue.toPrecision(5)
+                moleMass[n/2] = tempMass
+                td.innerText = tempMass.toPrecision(5)
 
             }
             
@@ -281,7 +270,6 @@ function updateInput(value){
 function balance(){
 
     testing(trimBeginnings(document.getElementById("formel").value.split("").filter(item => !(item == ' ')).join().replaceAll(",",""))).then(result =>{
-
         lastTime = result[1]
         result = Object.entries(result[0]).map(e => e = e[1])
         
@@ -346,10 +334,7 @@ function trimBeginnings(string){
 
 
 function deep_value(obj, path){
-    for (var i=0, path=path.split('.'), len=path.length; i<len; i++){
-        obj = obj[path[i]];
-    };
-    return obj;
+    return obj[path];
 };
 
 const split = (arr) => {

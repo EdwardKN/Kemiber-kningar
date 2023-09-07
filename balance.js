@@ -2,7 +2,12 @@ async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)
 
 function isDigit(s) { return s >= '0' && s <= '9' }
 
-function count(arr, count) { return arr.filter(i => i === count).length }
+function count(str, target) {
+    let result = 0
+    let re = new RegExp(target + "[0-9]*", "g")
+    str.replace(re, match => result += parseInt(match.substring(target.length) || 1))
+    return result
+}
 
 function unpackAllParentheses(str) {
     let res = ""
@@ -10,23 +15,23 @@ function unpackAllParentheses(str) {
     let i = 0
 
     while (i < str.length) {
-        if (str[i] == '(') {
-            let count = 1
-            i++
-            stack.push("")
-            while (count != 0) {
-                if (str[i] == '(') {
-                    stack.push("")
-                    count++
-                } else if (str[i] == ')') {
-                    count--
-                    i++
-                    if (count == 0) {res += numbersAfter(stack.pop(), str[i]) }
-                    else { stack[stack.length - 2] += numbersAfter(stack.pop(), str[i]) }
-                } else { stack[count - 1] += str[i] }
+        if (str[i] !== '(') { res += str[i]; i++; continue }
+
+        let count = 1
+        i++
+        stack.push("")
+        while (count != 0) {
+            if (str[i] == '(') {
+                stack.push("")
+                count++
+            } else if (str[i] == ')') {
+                count--
                 i++
-            }
-        } else { res += str[i]; i++ }
+                if (count == 0) {res += numbersAfter(stack.pop(), str[i]) }
+                else { stack[stack.length - 2] += numbersAfter(stack.pop(), str[i]) }
+            } else { stack[count - 1] += str[i] }
+            i++
+        }
     }
     return res
 }
@@ -34,106 +39,111 @@ function unpackAllParentheses(str) {
 function numbersAfter(str, num) {
     let res = ""
     let n = ""
+
     for (let i = 0; i < str.length; i++) {
         let char = str[i]
 
         if (isDigit(char)) { n += char; continue }
 
         if (char == char.toUpperCase() && res != "") {
-            res += n == "" ? num : n * num
+            res += n === "" ? num : n * num
             res += char
             n = ""
         } else {
             res += char
         }
-    }; res += n == "" ? num : n * num
+    }
+    if (n === "") { res += num }
+    else { res += n * num }
     return res
 }
 
 
-async function stringToCharFrequencyObject(strs) {
+function multipleElementAndNumber(str) {
+    let result = ""
+    let tempResult = ""
+    let n = ""
+
+    for (let char of str) {
+        if (isDigit(char)) { n += char; continue }
+        if (char.toUpperCase() === char) {
+            result += (tempResult + ',').repeat(n || 1)
+            tempResult = char
+            n = "" 
+        } else { tempResult += char }
+    }
+    result += (tempResult + ',').repeat(n || 1)
+    return result.substring(1, result.length - 1).split(',')
+}
+
+
+function stringToCharFrequencyObject(strs) {
     let result = {}
+
     for (let str of strs) {
         result[str] = {}
-        let usedLetters = []
-      for (let char of str) {
-        if (usedLetters.includes(char)) { continue }
-        usedLetters.push(char)
-        result[str][char] = count(str, char)
+
+        for (let char of new Set(multipleElementAndNumber(str))) {
+            result[str][char] = count(str, char)
         }
     }
     return result
 }
 
 async function testing(equation) { // Already checked equation
-    // Fix
-    let trimmed = equation.replace(/(\r\n|\t|\n|\r| )/gm, "") // Remove whitespaces
-    let removePar = unpackAllParentheses(trimmed)
-    let a = removePar.split('=').map(e => e.split('+').map(e => {
-        let result = []
-        e.replace(/[A-Z][a-z]?[0-9]*/g, match => {
-            let nums = ((match.match(/\d+/g) || [])[0] || 1)
-            for (let i = 0; i < nums; i++) { result.push(match.replace(/\d+/g, "")) }
-            return match
-        })
-        return result
-    }))
-
-    // a = [React, Prod] > React = [elements] > element = [Atoms]
-
-    //-----------------------------------------------
     let s = performance.now()
+    let trimmed = equation.replace(/\s/gm, "") // Remove whitespaces
+    let splitUp = unpackAllParentheses(trimmed).split('=').map(e => e.split('+')) 
+
     // Idk Just Works I Guess
-    let r = a[0] // List of strs
-    let p = a[1] // List of strs
+    let [r, p] = splitUp
     let elements = r.concat(p) // Keep track of all elements when searching
-
-    let combined = await stringToCharFrequencyObject(elements) // Object of all elements, and the amount of each character
-
+    let combined = stringToCharFrequencyObject(elements) // Object of all elements, and the amount of each character
     let values = elements.reduce((obj, key) => (obj[key] = null, obj), {}) // Object of all elements, with mole value
-
-    let unique = Array.from(new Set(a[0].concat.apply([], a[0]).concat(a[1].concat.apply([], a[1])))) // Array of all unique characters in all combined
-
+    let unique = []
+    elements.forEach(e => {
+        let atoms = e.match(/[A-Z][a-z]?/g)
+        for (let atom of atoms) {
+            unique.push(atom)
+        }
+    })
+    unique = Array.from(new Set(unique))
+    let def = Object.keys(values).sort((a, b) => b.length - a.length)[0]
     let n = 1
-    while (!Object.values(values).every(x => x != null && x % 1 == 0)) {
-        await sleep(1)
-        if (performance.now() - s >= 1000) {
+
+    while (!Object.values(values).every(val => val !== null && val % 1 == 0)) {
+        if (performance.now() - s >= 1500) {
             Object.keys(values).forEach(key => values[key] = 1)
             break
         }
 
-        Object.keys(values).forEach(key => values[key] = null) // Reset keys
-        values[Object.keys(combined)[0]] = n // Update first element mole in reaction
+        Object.keys(values).forEach(key => values[key] = null)
+        values[def] = n
 
-        // Check characters
-        let i = 0
-        while (i < unique.length) {
+        for (let i = 0; i < unique.length; i++) {
+            
             let char = unique[i]
+            let elsWithChar = elements.filter(x => multipleElementAndNumber(x).includes(char)) // All elements with char in them
+            let none = elsWithChar.filter(x => values[x] == null) // Filter out all elements with no value
 
-            let elsWithLet = elements.filter(x => x.includes(char)) // All elements with char in them
-            let none = elsWithLet.filter(x => values[x] == null) // Filter out all elements with no value
+            if (none.length !== 1) { continue }
+ 
+            none = none[0]
+            let left = r.includes(none) ? 1 : -1 // Reactant or Product 
+            let amount = 0
 
-            if (none.length === 1) {
-                none = none[0]
-                elsWithLet = elsWithLet.filter(x => x != none)
-                let left = r.includes(none) ? 1 : -1 // Reactant or Product 
-                none = none.join(',')
-                let amount = 0
-                for (let element of elsWithLet) {
-                    if (r.includes(element)) {
-                        amount -= left * combined[element][char] * values[element]
-                    } else {
-                        amount += left * combined[element][char] * values[element]
-                    }
+            for (let element of elsWithChar) {
+                if (element === none) { continue }
+                if (r.includes(element)) {
+                    amount -= left * combined[element][char] * values[element]
+                } else {
+                    amount += left * combined[element][char] * values[element]
                 }
-                values[none] = amount / combined[none][char]
-                i = 0
-            } else { i++ }
+            }
+            values[none] = amount / combined[none][char]
+            i = -1
         }
         n++
     }
-    let e = performance.now()
-
-    return [values,e-s]
-
+    return [values, performance.now() - s]
 }
