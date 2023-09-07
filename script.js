@@ -215,7 +215,7 @@ function updateInput(value){
 
                 td2 = document.createElement("td");
                 let but = document.createElement("button");
-                but.innerText = "Balance ("+ lastTime + "ms)"
+                but.innerText = "Balance ("+ lastTime.toPrecision(2) + "ms)"
                 but.setAttribute("onclick","balance()")
                 td2.appendChild(but)
 
@@ -270,7 +270,6 @@ function updateInput(value){
 function balance(){
 
     testing(trimBeginnings(document.getElementById("formel").value.split("").filter(item => !(item == ' ')).join().replaceAll(",",""))).then(result =>{
-
         lastTime = result[1]
         result = Object.entries(result[0]).map(e => e = e[1])
         

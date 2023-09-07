@@ -46,7 +46,7 @@ function numbersAfter(str, num) {
         if (isDigit(char)) { n += char; continue }
 
         if (char == char.toUpperCase() && res != "") {
-            res += n == "" ? num : n * num
+            res += n === "" ? num : n * num
             res += char
             n = ""
         } else {
@@ -58,6 +58,7 @@ function numbersAfter(str, num) {
     return res
 }
 
+
 function multipleElementAndNumber(str) {
     let result = ""
     let tempResult = ""
@@ -65,13 +66,16 @@ function multipleElementAndNumber(str) {
 
     for (let char of str) {
         if (isDigit(char)) { n += char; continue }
-            result += tempResult.repeat(n || 1)
+        if (char.toUpperCase() === char) {
+            result += (tempResult + ',').repeat(n || 1)
             tempResult = char
             n = "" 
-        }
-    result += tempResult.repeat(n || 1)
-    return result.split('')
+        } else { tempResult += char }
+    }
+    result += (tempResult + ',').repeat(n || 1)
+    return result.substring(1, result.length - 1).split(',')
 }
+
 
 function stringToCharFrequencyObject(strs) {
     let result = {}
@@ -79,8 +83,7 @@ function stringToCharFrequencyObject(strs) {
     for (let str of strs) {
         result[str] = {}
 
-        for (let char of new Set(str)) {
-            if (isDigit(char)) { continue }
+        for (let char of new Set(multipleElementAndNumber(str))) {
             result[str][char] = count(str, char)
         }
     }
@@ -89,8 +92,6 @@ function stringToCharFrequencyObject(strs) {
 
 async function testing(equation) { // Already checked equation
     let s = performance.now()
-
-    console.log(equation)
     let trimmed = equation.replace(/\s/gm, "") // Remove whitespaces
     let splitUp = unpackAllParentheses(trimmed).split('=').map(e => e.split('+')) 
 
@@ -99,13 +100,19 @@ async function testing(equation) { // Already checked equation
     let elements = r.concat(p) // Keep track of all elements when searching
     let combined = stringToCharFrequencyObject(elements) // Object of all elements, and the amount of each character
     let values = elements.reduce((obj, key) => (obj[key] = null, obj), {}) // Object of all elements, with mole value
-    let unique = Array.from(new Set(elements.map(e => e.match(/[A-Z][a-z]?/)[0])))
-
+    let unique = []
+    elements.forEach(e => {
+        let atoms = e.match(/[A-Z][a-z]?/g)
+        for (let atom of atoms) {
+            unique.push(atom)
+        }
+    })
+    unique = Array.from(new Set(unique))
     let def = Object.keys(values).sort((a, b) => b.length - a.length)[0]
     let n = 1
 
     while (!Object.values(values).every(val => val !== null && val % 1 == 0)) {
-        if (performance.now() - s >= 1000) {
+        if (performance.now() - s >= 1500) {
             Object.keys(values).forEach(key => values[key] = 1)
             break
         }
@@ -114,8 +121,9 @@ async function testing(equation) { // Already checked equation
         values[def] = n
 
         for (let i = 0; i < unique.length; i++) {
+            
             let char = unique[i]
-            let elsWithChar = elements.filter(x => x.includes(char)) // All elements with char in them
+            let elsWithChar = elements.filter(x => multipleElementAndNumber(x).includes(char)) // All elements with char in them
             let none = elsWithChar.filter(x => values[x] == null) // Filter out all elements with no value
 
             if (none.length !== 1) { continue }
@@ -137,6 +145,5 @@ async function testing(equation) { // Already checked equation
         }
         n++
     }
-    console.log(`The function Testing took ${performance.now() - s} milliseconds`)
-    return values
+    return [values, performance.now() - s]
 }
