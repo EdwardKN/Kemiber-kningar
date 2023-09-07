@@ -195,7 +195,6 @@ function updateInput(value){
     
 
     newArray = split(newValue);
-    console.log(newArray)
     for(let n = 0; n<Object.entries(rows).length;n++ ){
         let td = document.createElement("td")
         td.innerText = Object.entries(rows)[n][1]
@@ -247,7 +246,7 @@ function updateInput(value){
             }
             if(i === 3 && split(oldNewValue)[n][0] !== "+" && split(oldNewValue)[n][0] !== "="){
                 let tempMass = 0
-                for (let el of newArray[n].filter(e => e !== '(' && e !== ')' && !isDigit(e))) {
+                for (let el of newArray[n].filter(e => e !== '(' && e !== ')' && !e.match(/[0-9]+/g))) {
                     let atom = el.match(/[A-Z][a-z]?/)[0]
                     tempMass += json.elements.filter(e => deep_value(e, 'symbol') === atom)[0].atomic_mass * el.length / atom.length
                 }
